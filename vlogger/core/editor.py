@@ -116,6 +116,10 @@ class VideoEditor:
             # Trim BGM to match total duration
             merged_bgm = merged_bgm.subclip(0, video_duration)
 
+            # Apply volume adjustment
+            if self.config.bgm.volume_percentage != 100.0:
+                merged_bgm = merged_bgm.volumex(self.config.bgm.volume_percentage / 100.0)
+
             # Apply fade in/fade out
             if self.config.bgm.fade_in > 0:
                 merged_bgm = merged_bgm.audio_fadein(self.config.bgm.fade_in)

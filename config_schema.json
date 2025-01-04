@@ -18,6 +18,12 @@
           "description": "BGM fade out duration in seconds",
           "title": "Fade Out",
           "type": "number"
+        },
+        "volume_percentage": {
+          "default": 100.0,
+          "description": "BGM volume percentage (0-100)",
+          "title": "Volume Percentage",
+          "type": "number"
         }
       },
       "required": [

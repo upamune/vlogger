@@ -36,6 +36,7 @@ class BGMSettings(BaseModel):
     path: str = Field(..., description="Path to BGM audio file")
     fade_in: float = Field(default=0.0, description="BGM fade in duration in seconds")
     fade_out: float = Field(default=0.0, description="BGM fade out duration in seconds")
+    volume_percentage: float = Field(default=100.0, description="BGM volume percentage (0-100)")
 
 class VideoItem(BaseModel):
     """
