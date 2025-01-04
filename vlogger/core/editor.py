@@ -17,6 +17,12 @@ from vlogger.models.config_model import VlogConfig, VideoItem
 from moviepy.config import change_settings
 
 class VideoEditor:
+    TEXT_POSITION = {
+        'left_bottom': (0.025, 0.9),   
+        'center': ("center", "center"),          
+        'right_top': ("right", "top"),     
+    }
+
     def __init__(self, config: VlogConfig):
         self.config = config
 
@@ -52,14 +58,15 @@ class VideoEditor:
 
                 txt_clip = (
                     TextClip(
-                        txt=overlay.text,
+                        txt=f"  {overlay.text}  ",
                         fontsize=font_size,
                         font=font_path if font_path else "DejaVu-Sans",
-                        color="white",
-                        stroke_color="black",
-                        stroke_width=2
+                        color="black",
+                        bg_color="white",
+                        stroke_color=None,
+                        print_cmd=True,
                     )
-                    .set_position(overlay.position)
+                    .set_position(self.TEXT_POSITION.get(overlay.position, self.TEXT_POSITION['left_bottom']), relative=True)
                     .set_start(overlay.start_time)
                     .set_duration(overlay.duration)
                 )
@@ -80,7 +87,7 @@ class VideoEditor:
         final_video = concatenate_videoclips(processed_clips, method="compose")
 
         # 3. BGMの合成 (無限ループ + フェードイン/フェードアウト)
-        if self.config.bgm:
+        if self.config.bgm and self.config.bgm.path.strip():
             bgm_clip = AudioFileClip(self.config.bgm.path)
             video_duration = final_video.duration
 
@@ -106,7 +113,6 @@ class VideoEditor:
 
             final_video = final_video.set_audio(composite_audio)
 
-        # 4. エンコードパラメータ
         codec = self.config.encoding.codec
         bitrate = self.config.encoding.bitrate
         preset = self.config.encoding.preset
@@ -116,10 +122,9 @@ class VideoEditor:
             codec=codec,
             bitrate=bitrate,
             preset=preset,
-            threads=4,  # 必要に応じて
+            threads=4,
         )
 
-        # リソースクローズ
         final_video.close()
         for c in processed_clips:
             c.close()

@@ -121,10 +121,9 @@
           "type": "number"
         },
         "position": {
-          "default": "bottom_left",
-          "description": "Text position (e.g., bottom_left, bottom_right)",
-          "title": "Position",
-          "type": "string"
+          "$ref": "#/$defs/PositionEnum",
+          "default": "left_bottom",
+          "description": "Text position on the video"
         },
         "font": {
           "anyOf": [
@@ -146,6 +145,15 @@
       ],
       "title": "OverlayText",
       "type": "object"
+    },
+    "PositionEnum": {
+      "enum": [
+        "left_bottom",
+        "right_top",
+        "center"
+      ],
+      "title": "PositionEnum",
+      "type": "string"
     },
     "VideoItem": {
       "description": "Represents a single video clip.\nHolds individual overlay settings specific to this video.",

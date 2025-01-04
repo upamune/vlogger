@@ -1,0 +1,3 @@
+[submodule "zen-kakugothic"]
+	path = zen-kakugothic
+	url = https://github.com/googlefonts/zen-kakugothic.git

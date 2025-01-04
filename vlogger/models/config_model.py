@@ -6,6 +6,7 @@ using videos: List[VideoItem] for management.
 from typing import List, Optional
 from pydantic import BaseModel, Field
 from vlogger.models.schema_utils import schema_with_title
+from enum import Enum
 
 class EncodingSettings(BaseModel):
     codec: Optional[str] = Field(default="libx264", description="Codec used for encoding")
@@ -16,11 +17,19 @@ class FontSettings(BaseModel):
     font_path: Optional[str] = Field(default=None, description="Font file path")
     font_size: Optional[int] = Field(default=24, description="Font size")
 
+class PositionEnum(str, Enum):
+    LEFT_BOTTOM = "left_bottom"
+    RIGHT_TOP = "right_top"
+    CENTER = "center"
+
 class OverlayText(BaseModel):
     text: str = Field(..., description="Text to display")
     start_time: float = Field(..., description="Text display start time in seconds")
     duration: float = Field(..., description="Duration to display text in seconds")
-    position: str = Field(default="bottom_left", description="Text position (e.g., bottom_left, bottom_right)")
+    position: PositionEnum = Field(
+        default=PositionEnum.LEFT_BOTTOM,
+        description="Text position on the video"
+    )
     font: Optional[FontSettings] = Field(default=None, description="Custom font settings for this text")
 
 class BGMSettings(BaseModel):
