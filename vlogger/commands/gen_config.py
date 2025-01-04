@@ -38,7 +38,7 @@ def generate_config_command(directory: Optional[str], extension: str) -> None:
 
             example_config = VlogConfig.construct_example()
             example_config.videos = items
-            config_data = example_config.dict(exclude_unset=True)
+            config_data = example_config.model_dump(exclude_unset=True, exclude_defaults=True, exclude_none=True)
 
     output_path = "config_template.yaml"
     with open(output_path, "w", encoding="utf-8") as f:

@@ -7,6 +7,7 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 from vlogger.models.schema_utils import schema_with_title
 from enum import Enum
+import yaml
 
 class EncodingSettings(BaseModel):
     codec: Optional[str] = Field(default="libx264", description="Codec used for encoding")
@@ -21,6 +22,12 @@ class PositionEnum(str, Enum):
     LEFT_BOTTOM = "left_bottom"
     RIGHT_TOP = "right_top"
     CENTER = "center"
+
+    def __str__(self) -> str:
+        return self.value
+    
+    def __repr__(self) -> str:
+        return self.value
 
 class OverlayText(BaseModel):
     text: str = Field(..., description="Text to display")
@@ -80,27 +87,36 @@ class VlogConfig(BaseModel):
                 VideoItem(
                     path="op.mp4",
                     overlays=[
-                        OverlayText(text="Welcome to OP", position="center"),
+                        OverlayText(text="Welcome to OP", position=PositionEnum.CENTER),
                     ],
                 ),
                 VideoItem(
                     path="video1.mp4",
                     overlays=[
-                        OverlayText(text="Video 1", position="left_bottom"),
-                        OverlayText(text="Video 1 :)", position="right_top"),
+                        OverlayText(text="Video 1", position=PositionEnum.LEFT_BOTTOM),
+                        OverlayText(text="Video 1 :)", position=PositionEnum.RIGHT_TOP),
                     ],
                 ),
                 VideoItem(
                     path="ed.mp4",
                     overlays=[
-                        OverlayText(text="This is ED", position="center"),
+                        OverlayText(text="This is ED", position=PositionEnum.CENTER),
                     ],
                 ),
             ],
-            bgm=BGMSettings(path="bgm.mp3", fade_in=2.0, fade_out=3.0, volume_percentage=100.0),
+            bgm=BGMSettings(path="bgm.mp3", volume_percentage=100.0),
             encoding=EncodingSettings(codec="libx264", bitrate="8000k", preset="medium"),
-            global_font=FontSettings(font_path=None, font_size=100),
+            global_font=FontSettings(font_size=100),
         )
 
     class Config:
         schema_extra = schema_with_title("VlogConfig", "Schema for Vlog creation configuration")
+        json_encoders = {
+            PositionEnum: lambda v: v.value,
+        }
+        
+def position_enum_representer(dumper: yaml.Dumper, data: PositionEnum) -> yaml.ScalarNode:
+    return dumper.represent_scalar('tag:yaml.org,2002:str', str(data))
+
+yaml.add_representer(PositionEnum, position_enum_representer)
+        
