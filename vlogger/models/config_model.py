@@ -50,6 +50,16 @@ class VlogConfig(BaseModel):
     # Default font settings used when individual overlays don't specify their own
     global_font: FontSettings = Field(default_factory=FontSettings)
 
+    # Add binary path configurations
+    ffmpeg_binary: Optional[str] = Field(
+        default="ffmpeg",
+        description="Path to FFmpeg binary. Defaults to 'ffmpeg' (assumes it's in PATH)"
+    )
+    imagemagick_binary: Optional[str] = Field(
+        default="convert",
+        description="Path to ImageMagick convert binary. Defaults to 'convert' (assumes it's in PATH)"
+    )
+
     @classmethod
     def construct_example(cls) -> "VlogConfig":
         """

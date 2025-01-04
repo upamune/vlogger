@@ -198,6 +198,32 @@
     },
     "global_font": {
       "$ref": "#/$defs/FontSettings"
+    },
+    "ffmpeg_binary": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "ffmpeg",
+      "description": "Path to FFmpeg binary. Defaults to 'ffmpeg' (assumes it's in PATH)",
+      "title": "Ffmpeg Binary"
+    },
+    "imagemagick_binary": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "convert",
+      "description": "Path to ImageMagick convert binary. Defaults to 'convert' (assumes it's in PATH)",
+      "title": "Imagemagick Binary"
     }
   },
   "title": "VlogConfig",

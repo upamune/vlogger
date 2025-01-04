@@ -14,10 +14,19 @@ from moviepy.editor import (
     concatenate_videoclips,
 )
 from vlogger.models.config_model import VlogConfig, VideoItem
+from moviepy.config import change_settings
 
 class VideoEditor:
     def __init__(self, config: VlogConfig):
         self.config = config
+
+        new_settings = {}
+        if self.config.ffmpeg_binary and self.config.ffmpeg_binary.strip():
+            new_settings["FFMPEG_BINARY"] = self.config.ffmpeg_binary.strip()
+        if self.config.imagemagick_binary and self.config.imagemagick_binary.strip():
+            new_settings["IMAGEMAGICK_BINARY"] = self.config.imagemagick_binary.strip()
+        if new_settings:
+            change_settings(new_settings)
 
     def process(self, output_path: str) -> None:
         """

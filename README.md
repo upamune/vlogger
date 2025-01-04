@@ -29,9 +29,6 @@ vlogger generate-config --dir /path/to/videos --extension "mp4,mov"
 # Create final vlog
 vlogger create --config config_template.yaml --output final_vlog.mp4
 
-# Shell completion script
-vlogger completion --shell bash
-
 # Generate JSON Schema (for developers)
 vlogger generate-schema
 ```
