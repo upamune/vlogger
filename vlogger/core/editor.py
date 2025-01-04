@@ -1,6 +1,6 @@
 """
-動画ごとにオーバーレイテキストを設定可能な構成。
-MoviePyを使って各動画を加工→連結し、BGMを載せる。
+Configuration that allows setting overlay text for each video.
+Process each video using MoviePy to add overlays, concatenate them, and add BGM.
 """
 
 import math
@@ -36,11 +36,11 @@ class VideoEditor:
 
     def process(self, output_path: str) -> None:
         """
-        config.videos に含まれる各動画に対して個別のオーバーレイを乗せ、
-        全クリップを連結し、BGMを合成して出力する。
+        Apply individual overlays to each video in config.videos,
+        concatenate all clips, and combine with BGM for final output.
         """
 
-        # 1. 各動画を個別に加工（テキストオーバーレイ）
+        # 1. Process each video individually (text overlays)
         processed_clips = []
         for video_item in self.config.videos:
             base_clip = VideoFileClip(video_item.path)
@@ -86,7 +86,7 @@ class VideoEditor:
                 text_clips.append(txt_clip)
 
             if text_clips:
-                # 動画 + テキストたちをまとめる
+                # Combine video and text overlays
                 composite_clip = CompositeVideoClip([base_clip, *text_clips])
             else:
                 composite_clip = base_clip
@@ -96,10 +96,10 @@ class VideoEditor:
         if not processed_clips:
             raise ValueError("No videos specified.")
 
-        # 2. 全部連結
+        # 2. Concatenate all clips
         final_video = concatenate_videoclips(processed_clips, method="compose")
 
-        # 3. BGMの合成 (無限ループ + フェードイン/フェードアウト)
+        # 3. Combine BGM (infinite loop + fade in/fade out)
         if self.config.bgm and self.config.bgm.path.strip():
             bgm_clip = AudioFileClip(self.config.bgm.path)
             video_duration = final_video.duration
@@ -109,16 +109,16 @@ class VideoEditor:
             for _ in range(loop_count - 1):
                 merged_bgm = merged_bgm.append(AudioFileClip(self.config.bgm.path))
 
-            # 合計時間に合わせて BGM を切り詰め
+            # Trim BGM to match total duration
             merged_bgm = merged_bgm.subclip(0, video_duration)
 
-            # フェードイン・フェードアウト
+            # Apply fade in/fade out
             if self.config.bgm.fade_in > 0:
                 merged_bgm = merged_bgm.audio_fadein(self.config.bgm.fade_in)
             if self.config.bgm.fade_out > 0:
                 merged_bgm = merged_bgm.audio_fadeout(self.config.bgm.fade_out)
 
-            # 既存音声と BGM をミックス
+            # Mix existing audio with BGM
             if final_video.audio:
                 composite_audio = CompositeAudioClip([final_video.audio, merged_bgm])
             else:
