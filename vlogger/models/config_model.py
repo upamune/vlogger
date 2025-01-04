@@ -24,8 +24,8 @@ class PositionEnum(str, Enum):
 
 class OverlayText(BaseModel):
     text: str = Field(..., description="Text to display")
-    start_time: float = Field(..., description="Text display start time in seconds")
-    duration: float = Field(..., description="Duration to display text in seconds")
+    start_time: Optional[float] = Field(default=None, description="Text display start time in seconds")
+    duration: Optional[float] = Field(default=None, description="Duration to display text in seconds")
     position: PositionEnum = Field(
         default=PositionEnum.LEFT_BOTTOM,
         description="Text position on the video"

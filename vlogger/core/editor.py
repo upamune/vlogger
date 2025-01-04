@@ -67,9 +67,22 @@ class VideoEditor:
                         print_cmd=True,
                     )
                     .set_position(self.TEXT_POSITION.get(overlay.position, self.TEXT_POSITION['left_bottom']), relative=True)
-                    .set_start(overlay.start_time)
-                    .set_duration(overlay.duration)
                 )
+
+                # Handle different combinations of start_time and duration
+                if overlay.start_time is not None and overlay.duration is not None:
+                    # Both specified - use as is
+                    txt_clip = txt_clip.set_start(overlay.start_time).set_duration(overlay.duration)
+                elif overlay.start_time is not None:
+                    # Only start_time specified - show until end of clip
+                    txt_clip = txt_clip.set_start(overlay.start_time)
+                elif overlay.duration is not None:
+                    # Only duration specified - start from beginning
+                    txt_clip = txt_clip.set_start(0).set_duration(overlay.duration)
+                else:
+                    # Neither specified - show for entire clip duration
+                    txt_clip = txt_clip.set_start(0).set_duration(base_clip.duration)
+
                 text_clips.append(txt_clip)
 
             if text_clips:

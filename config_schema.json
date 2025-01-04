@@ -111,14 +111,30 @@
           "type": "string"
         },
         "start_time": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
           "description": "Text display start time in seconds",
-          "title": "Start Time",
-          "type": "number"
+          "title": "Start Time"
         },
         "duration": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
           "description": "Duration to display text in seconds",
-          "title": "Duration",
-          "type": "number"
+          "title": "Duration"
         },
         "position": {
           "$ref": "#/$defs/PositionEnum",
@@ -139,9 +155,7 @@
         }
       },
       "required": [
-        "text",
-        "start_time",
-        "duration"
+        "text"
       ],
       "title": "OverlayText",
       "type": "object"
