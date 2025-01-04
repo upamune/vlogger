@@ -1,0 +1,205 @@
+{
+  "$defs": {
+    "BGMSettings": {
+      "properties": {
+        "path": {
+          "description": "Path to BGM audio file",
+          "title": "Path",
+          "type": "string"
+        },
+        "fade_in": {
+          "default": 0.0,
+          "description": "BGM fade in duration in seconds",
+          "title": "Fade In",
+          "type": "number"
+        },
+        "fade_out": {
+          "default": 0.0,
+          "description": "BGM fade out duration in seconds",
+          "title": "Fade Out",
+          "type": "number"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "BGMSettings",
+      "type": "object"
+    },
+    "EncodingSettings": {
+      "properties": {
+        "codec": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "libx264",
+          "description": "Codec used for encoding",
+          "title": "Codec"
+        },
+        "bitrate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "8000k",
+          "description": "Bitrate",
+          "title": "Bitrate"
+        },
+        "preset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "medium",
+          "description": "Encoding preset",
+          "title": "Preset"
+        }
+      },
+      "title": "EncodingSettings",
+      "type": "object"
+    },
+    "FontSettings": {
+      "properties": {
+        "font_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Font file path",
+          "title": "Font Path"
+        },
+        "font_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 24,
+          "description": "Font size",
+          "title": "Font Size"
+        }
+      },
+      "title": "FontSettings",
+      "type": "object"
+    },
+    "OverlayText": {
+      "properties": {
+        "text": {
+          "description": "Text to display",
+          "title": "Text",
+          "type": "string"
+        },
+        "start_time": {
+          "description": "Text display start time in seconds",
+          "title": "Start Time",
+          "type": "number"
+        },
+        "duration": {
+          "description": "Duration to display text in seconds",
+          "title": "Duration",
+          "type": "number"
+        },
+        "position": {
+          "default": "bottom_left",
+          "description": "Text position (e.g., bottom_left, bottom_right)",
+          "title": "Position",
+          "type": "string"
+        },
+        "font": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FontSettings"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom font settings for this text"
+        }
+      },
+      "required": [
+        "text",
+        "start_time",
+        "duration"
+      ],
+      "title": "OverlayText",
+      "type": "object"
+    },
+    "VideoItem": {
+      "description": "Represents a single video clip.\nHolds individual overlay settings specific to this video.",
+      "properties": {
+        "path": {
+          "description": "Path to video file",
+          "title": "Path",
+          "type": "string"
+        },
+        "overlays": {
+          "description": "List of text overlays for this video",
+          "items": {
+            "$ref": "#/$defs/OverlayText"
+          },
+          "title": "Overlays",
+          "type": "array"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "VideoItem",
+      "type": "object"
+    }
+  },
+  "description": "Configuration for video concatenation, including global BGM and encoding settings.",
+  "properties": {
+    "videos": {
+      "description": "List of videos to concatenate. Combined in order.",
+      "items": {
+        "$ref": "#/$defs/VideoItem"
+      },
+      "title": "Videos",
+      "type": "array"
+    },
+    "bgm": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BGMSettings"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "BGM settings"
+    },
+    "encoding": {
+      "$ref": "#/$defs/EncodingSettings"
+    },
+    "global_font": {
+      "$ref": "#/$defs/FontSettings"
+    }
+  },
+  "title": "VlogConfig",
+  "type": "object"
+}

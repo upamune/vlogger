@@ -1,0 +1,22 @@
+[project]
+name = "vlogger"
+version = "0.1.0"
+description = "A CLI tool to create simple Vlog videos with text overlays, BGM looping, etc. (MoviePy version)"
+readme = "README.md"
+requires-python = ">=3.13"
+authors = [
+  { name = "Yu SERIZAWA", email = "yu@serizawa.me" }
+]
+dependencies = [
+    "pydantic>=2.10.4",
+    "pyyaml>=6.0.2",
+    "rich>=13.9.4",
+    "typer>=0.15.1",
+    "moviepy==1.0.3",
+]
+
+[tool.uv]
+package = true
+
+[project.scripts]
+vlogger = "vlogger.cli:app"
