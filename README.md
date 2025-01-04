@@ -1,5 +1,7 @@
 # vlogger
 
+<img src="https://i.gyazo.com/f4a1d30bf5101796a1f3093038929dab.jpg" alt="logo" width="500">
+
 A Python CLI tool to create simple Vlog videos with text overlays, BGM, etc.,  
 using [MoviePy](https://github.com/Zulko/moviepy).
 

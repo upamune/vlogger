@@ -54,7 +54,7 @@ class VideoEditor:
                     TextClip(
                         txt=overlay.text,
                         fontsize=font_size,
-                        font=font_path if font_path else "Arial",
+                        font=font_path if font_path else "DejaVu-Sans",
                         color="white",
                         stroke_color="black",
                         stroke_width=2

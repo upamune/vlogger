@@ -230,3 +230,4 @@ pyrightconfig.json
 tmp/
 config_template.yaml
 *.mp4
+*.mp3
