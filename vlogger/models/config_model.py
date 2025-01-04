@@ -80,25 +80,26 @@ class VlogConfig(BaseModel):
                 VideoItem(
                     path="op.mp4",
                     overlays=[
-                        OverlayText(text="Welcome to OP", start_time=0.5, duration=3.0, position="bottom_left"),
+                        OverlayText(text="Welcome to OP", position="center"),
                     ],
                 ),
                 VideoItem(
                     path="video1.mp4",
                     overlays=[
-                        OverlayText(text="Video 1", start_time=2.0, duration=4.0, position="bottom_right"),
+                        OverlayText(text="Video 1", position="left_bottom"),
+                        OverlayText(text="Video 1 :)", position="right_top"),
                     ],
                 ),
                 VideoItem(
                     path="ed.mp4",
                     overlays=[
-                        OverlayText(text="This is ED", start_time=0.0, duration=3.0, position="bottom_left"),
+                        OverlayText(text="This is ED", position="center"),
                     ],
                 ),
             ],
-            bgm=BGMSettings(path="bgm.mp3", fade_in=2.0, fade_out=3.0),
+            bgm=BGMSettings(path="bgm.mp3", fade_in=2.0, fade_out=3.0, volume_percentage=100.0),
             encoding=EncodingSettings(codec="libx264", bitrate="8000k", preset="medium"),
-            global_font=FontSettings(font_path=None, font_size=24),
+            global_font=FontSettings(font_path=None, font_size=100),
         )
 
     class Config:
