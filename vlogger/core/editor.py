@@ -48,6 +48,10 @@ class VideoEditor:
             # この動画固有の overlays
             text_clips = []
             for overlay in video_item.overlays:
+                # Skip if text is None or empty
+                if not overlay.text or not overlay.text.strip():
+                    continue
+
                 font_path = self.config.global_font.font_path
                 font_size = self.config.global_font.font_size
 
