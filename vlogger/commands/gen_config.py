@@ -26,6 +26,8 @@ def generate_config_command(directory: Optional[str], extension: str) -> None:
             video_files.extend(glob.glob(pattern_lower))
             video_files.extend(glob.glob(pattern_upper))
 
+        video_files = sorted(video_files)
+
         if not video_files:
             console.log(f"No video files (.{extension}) found in the directory. Generating a generic template...")
             config_data = VlogConfig.construct_example().dict(exclude_unset=True)

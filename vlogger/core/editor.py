@@ -143,6 +143,7 @@ class VideoEditor:
             codec=codec,
             bitrate=bitrate,
             preset=preset,
+            write_logfile=True,
             threads=4,
         )
 
