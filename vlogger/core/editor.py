@@ -46,6 +46,11 @@ class VideoEditor:
         for video_item in self.config.videos:
             base_clip = VideoFileClip(video_item.path)
 
+            # Handle audio muting based on settings
+            should_mute = video_item.mute if video_item.mute is not None else self.config.global_mute
+            if should_mute:
+                base_clip = base_clip.without_audio()
+
             # この動画固有の overlays
             text_clips = []
             for overlay in video_item.overlays:
@@ -112,10 +117,11 @@ class VideoEditor:
         final_audio_clips = []
         
         try:
-            # First, preserve original audio if it exists
+            # First, add original video audio if it exists (this would be None if muted)
             if final_video.audio is not None:
                 final_audio_clips.append(final_video.audio)
 
+            # Then add BGM if specified (BGM is added regardless of mute settings)
             if self.config.bgm and self.config.bgm.path.strip():
                 bgm_clip = AudioFileClip(self.config.bgm.path)
                 bgm_clips.append(bgm_clip)

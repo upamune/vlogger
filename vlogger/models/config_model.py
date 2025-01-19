@@ -52,6 +52,7 @@ class VideoItem(BaseModel):
     """
     path: str = Field(..., description="Path to video file")
     overlays: List[OverlayText] = Field(default_factory=list, description="List of text overlays for this video")
+    mute: Optional[bool] = Field(default=None, description="Whether to mute this video's audio. If not set, follows global_mute setting.")
 
 class VlogConfig(BaseModel):
     """
@@ -66,6 +67,9 @@ class VlogConfig(BaseModel):
 
     # Default font settings used when individual overlays don't specify their own
     global_font: FontSettings = Field(default_factory=FontSettings)
+
+    # Global audio settings
+    global_mute: bool = Field(default=False, description="Whether to mute all videos by default. Can be overridden per video.")
 
     # Add binary path configurations
     ffmpeg_binary: Optional[str] = Field(

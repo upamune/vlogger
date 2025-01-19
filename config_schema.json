@@ -190,6 +190,19 @@
           },
           "title": "Overlays",
           "type": "array"
+        },
+        "mute": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to mute this video's audio. If not set, follows global_mute setting.",
+          "title": "Mute"
         }
       },
       "required": [
@@ -226,6 +239,12 @@
     },
     "global_font": {
       "$ref": "#/$defs/FontSettings"
+    },
+    "global_mute": {
+      "default": false,
+      "description": "Whether to mute all videos by default. Can be overridden per video.",
+      "title": "Global Mute",
+      "type": "boolean"
     },
     "ffmpeg_binary": {
       "anyOf": [
