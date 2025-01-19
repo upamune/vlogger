@@ -12,6 +12,7 @@ from moviepy.editor import (
     CompositeAudioClip,
     TextClip,
     concatenate_videoclips,
+    concatenate_audioclips,
 )
 from vlogger.models.config_model import VlogConfig, VideoItem
 from moviepy.config import change_settings
@@ -101,52 +102,75 @@ class VideoEditor:
             raise ValueError("No videos specified.")
 
         # 2. Concatenate all clips
-        final_video = concatenate_videoclips(processed_clips, method="compose")
-
-        # 3. Combine BGM (infinite loop + fade in/fade out)
-        if self.config.bgm and self.config.bgm.path.strip():
-            bgm_clip = AudioFileClip(self.config.bgm.path)
-            video_duration = final_video.duration
-
-            loop_count = math.ceil(video_duration / bgm_clip.duration)
-            merged_bgm = bgm_clip
-            for _ in range(loop_count - 1):
-                merged_bgm = merged_bgm.append(AudioFileClip(self.config.bgm.path))
-
-            # Trim BGM to match total duration
-            merged_bgm = merged_bgm.subclip(0, video_duration)
-
-            # Apply volume adjustment
-            if self.config.bgm.volume_percentage != 100.0:
-                merged_bgm = merged_bgm.volumex(self.config.bgm.volume_percentage / 100.0)
-
-            # Apply fade in/fade out
-            if self.config.bgm.fade_in > 0:
-                merged_bgm = merged_bgm.audio_fadein(self.config.bgm.fade_in)
-            if self.config.bgm.fade_out > 0:
-                merged_bgm = merged_bgm.audio_fadeout(self.config.bgm.fade_out)
-
-            # Mix existing audio with BGM
-            if final_video.audio:
-                composite_audio = CompositeAudioClip([final_video.audio, merged_bgm])
-            else:
-                composite_audio = CompositeAudioClip([merged_bgm])
-
-            final_video = final_video.set_audio(composite_audio)
-
-        codec = self.config.encoding.codec
-        bitrate = self.config.encoding.bitrate
-        preset = self.config.encoding.preset
-
-        final_video.write_videofile(
-            output_path,
-            codec=codec,
-            bitrate=bitrate,
-            preset=preset,
-            write_logfile=True,
-            threads=4,
+        final_video = concatenate_videoclips(
+            processed_clips,
+            method="chain",
         )
+        
+        # 3. Combine BGM (infinite loop + fade in/fade out)
+        bgm_clips = []  # Keep track of all BGM clips for proper cleanup
+        final_audio_clips = []
+        
+        try:
+            # First, preserve original audio if it exists
+            if final_video.audio is not None:
+                final_audio_clips.append(final_video.audio)
 
-        final_video.close()
-        for c in processed_clips:
-            c.close()
+            if self.config.bgm and self.config.bgm.path.strip():
+                bgm_clip = AudioFileClip(self.config.bgm.path)
+                bgm_clips.append(bgm_clip)
+                video_duration = final_video.duration
+
+                # Calculate how many times we need to loop the BGM
+                loop_count = math.ceil(video_duration / bgm_clip.duration)
+
+                # Create the full-length BGM by concatenating copies
+                bgm_parts = []
+                for _ in range(loop_count):
+                    new_clip = AudioFileClip(self.config.bgm.path)
+                    bgm_clips.append(new_clip)
+                    bgm_parts.append(new_clip)
+
+                merged_bgm = concatenate_audioclips(bgm_parts)
+
+                # Trim BGM to match total duration
+                merged_bgm = merged_bgm.subclip(0, video_duration)
+
+                # Apply volume adjustment
+                if self.config.bgm.volume_percentage != 100.0:
+                    merged_bgm = merged_bgm.volumex(self.config.bgm.volume_percentage / 100.0)
+
+                # Apply fade in/fade out
+                if self.config.bgm.fade_in > 0:
+                    merged_bgm = merged_bgm.audio_fadein(self.config.bgm.fade_in)
+                if self.config.bgm.fade_out > 0:
+                    merged_bgm = merged_bgm.audio_fadeout(self.config.bgm.fade_out)
+
+                final_audio_clips.append(merged_bgm)
+
+            # Create final audio mix if we have any audio clips
+            if final_audio_clips:
+                composite_audio = CompositeAudioClip(final_audio_clips)
+                final_video = final_video.set_audio(composite_audio)
+
+            codec = self.config.encoding.codec
+            bitrate = self.config.encoding.bitrate
+            preset = self.config.encoding.preset
+
+            final_video.write_videofile(
+                output_path,
+                codec=codec,
+                bitrate=bitrate,
+                preset=preset,
+                write_logfile=True,
+                threads=4,
+                audio_codec="aac",
+            )
+        finally:
+            # Cleanup all clips
+            if final_video:
+                final_video.close()
+            for clip in processed_clips:
+                clip.close()
+            for clip in bgm_clips:
+                clip.close()
