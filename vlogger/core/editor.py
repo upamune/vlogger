@@ -169,7 +169,7 @@ class VideoEditor:
                 bitrate=bitrate,
                 preset=preset,
                 write_logfile=True,
-                threads=4,
+                threads="auto",
                 audio_codec="aac",
             )
         finally:

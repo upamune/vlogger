@@ -5,17 +5,25 @@
 import os
 import glob
 import yaml
+import platform
 from typing import Optional
 from rich.console import Console
 
-from vlogger.models.config_model import VlogConfig, VideoItem, OverlayText
+from vlogger.models.config_model import VlogConfig, VideoItem, OverlayText, EncodingSettings
 
 console = Console()
+
+def is_apple_silicon() -> bool:
+    """Check if the system is running on Apple Silicon."""
+    return platform.system() == "Darwin" and platform.machine() == "arm64"
 
 def generate_config_command(directory: Optional[str], extension: str) -> None:
     if directory is None:
         console.log("No directory specified. Generating a generic config template...")
-        config_data = VlogConfig.construct_example().dict(exclude_unset=True)
+        example_config = VlogConfig.construct_example()
+        if is_apple_silicon():
+            example_config.encoding = EncodingSettings(codec="h264_videotoolbox", bitrate="8000k")
+        config_data = example_config.dict(exclude_unset=True)
     else:
         console.log(f"Generating config template for directory: {directory}")
         exts = [ext.strip() for ext in extension.split(",") if ext.strip()]
@@ -30,7 +38,10 @@ def generate_config_command(directory: Optional[str], extension: str) -> None:
 
         if not video_files:
             console.log(f"No video files (.{extension}) found in the directory. Generating a generic template...")
-            config_data = VlogConfig.construct_example().dict(exclude_unset=True)
+            example_config = VlogConfig.construct_example()
+            if is_apple_silicon():
+                example_config.encoding = EncodingSettings(codec="h264_videotoolbox", bitrate="8000k")
+            config_data = example_config.dict(exclude_unset=True)
         else:
             # ディレクトリ内の動画をベースに、簡易的な VideoItem を作ってみる例
             items = []
@@ -40,7 +51,9 @@ def generate_config_command(directory: Optional[str], extension: str) -> None:
 
             example_config = VlogConfig.construct_example()
             example_config.videos = items
-            config_data = example_config.model_dump(exclude_unset=True, exclude_defaults=True, exclude_none=True)
+            if is_apple_silicon():
+                example_config.encoding = EncodingSettings(codec="h264_videotoolbox", bitrate="8000k")
+            config_data = example_config.model_dump(exclude_unset=True, exclude_none=True)
 
     output_path = "config_template.yaml"
     with open(output_path, "w", encoding="utf-8") as f:

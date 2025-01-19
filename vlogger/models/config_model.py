@@ -10,7 +10,7 @@ from enum import Enum
 import yaml
 
 class EncodingSettings(BaseModel):
-    codec: Optional[str] = Field(default="libx264", description="Codec used for encoding")
+    codec: Optional[str] = Field(default="h264_videotoolbox", description="Codec used for encoding")
     bitrate: Optional[str] = Field(default="8000k", description="Bitrate")
     preset: Optional[str] = Field(default="medium", description="Encoding preset")
 
